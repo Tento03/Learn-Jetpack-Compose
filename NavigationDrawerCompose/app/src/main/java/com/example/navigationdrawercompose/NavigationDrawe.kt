@@ -25,6 +25,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +33,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.navigationdrawercompose.ui.theme.GreenJc
+import com.example.tes.Favorite
+import com.example.tes.Home
+import com.example.tes.Setting
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,6 +49,9 @@ fun NavigationDrawer(){
     val coroutineScope= rememberCoroutineScope()
     val drawerState= rememberDrawerState(initialValue = DrawerValue.Closed)
     val context= LocalContext.current.applicationContext
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute=navBackStackEntry?.destination?.route
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -60,12 +68,12 @@ fun NavigationDrawer(){
                 Divider()
                 NavigationDrawerItem(
                     label = { Text("Home", color = GreenJc) },
-                    selected = false,
+                    selected = currentRoute=="Home",
                     onClick = {
                         coroutineScope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("Home"){
+                        navController.navigate(Screens.Home.screen){
                             popUpTo(0)
                         }
                     },
@@ -73,12 +81,12 @@ fun NavigationDrawer(){
                 )
                 NavigationDrawerItem(
                     label = { Text("Favorite", color = GreenJc) },
-                    selected = false,
+                    selected = currentRoute=="Favorite",
                     onClick = {
                         coroutineScope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("Favorite"){
+                        navController.navigate(Screens.Favorite.screen){
                             popUpTo(0)
                         }
                     },
@@ -86,12 +94,12 @@ fun NavigationDrawer(){
                 )
                 NavigationDrawerItem(
                     label = { Text("Settings", color = GreenJc) },
-                    selected = false,
+                    selected = currentRoute=="Settings",
                     onClick = {
                         coroutineScope.launch {
                             drawerState.close()
                         }
-                        navController.navigate("Settings"){
+                        navController.navigate(Screens.Setting.screen){
                             popUpTo(0)
                         }
                     },
@@ -125,14 +133,14 @@ fun NavigationDrawer(){
             }
         ) {
             NavHost(navController=navController, startDestination = "Home"){
-                composable("Home"){
-
+                composable(Screens.Home.screen){
+                    Home()
                 }
-                composable("Favorite"){
-
+                composable(Screens.Favorite.screen){
+                    Favorite()
                 }
-                composable("Settings"){
-
+                composable(Screens.Setting.screen){
+                    Setting()
                 }
             }
         }
